@@ -1,0 +1,15 @@
+{
+  "vegetables": [
+    "Brocolli",
+    "Carrot",
+    "Potato"
+  ],
+  "fruits": [
+    "Apple",
+    "Banana"
+  ],
+  "nuts": [
+    "Almonds",
+    "Cashews"
+  ]
+}

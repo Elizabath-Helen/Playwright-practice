@@ -1,0 +1,21 @@
+Vegetables: [
+  'Brocolli', 'Cauliflower',
+  'Cucumber', 'Beetroot',
+  'Carrot',   'Tomato',
+  'Beans',    'Brinjal',
+  'Capsicum', 'Mushroom',
+  'Potato',   'Pumpkin',
+  'Corn',     'Onion'
+]
+Vegetable Count: 14
+Fruits: [
+  'Apple',       'Banana',
+  'Grapes',      'Mango',
+  'Musk Melon',  'Orange',
+  'Pears',       'Pomegranate',
+  'Raspberry',   'Strawberry',
+  'Water Melon'
+]
+Fruit Count: 11
+Nuts: [ 'Almonds', 'Pista', 'Nuts Mixture', 'Cashews', 'Walnuts' ]
+Nuts Count: 5

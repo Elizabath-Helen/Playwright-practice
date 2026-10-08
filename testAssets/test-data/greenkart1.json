@@ -1,0 +1,13 @@
+{
+  "vegetables": [
+    "Brocolli", "Cauliflower", "Cucumber", "Beetroot", "Carrot", "Tomato",
+    "Beans", "Brinjal", "Capsicum", "Mushroom", "Potato", "Pumpkin", "Corn", "Onion"
+  ],
+  "fruits": [
+    "Apple", "Banana", "Grapes", "Mango", "Musk Melon", "Orange",
+    "Pears", "Pomegranate", "Raspberry", "Strawberry", "Water Melon"
+  ],
+  "nuts": [
+    "Almonds", "Pista", "Nuts Mixture", "Cashews", "Walnuts"
+  ]
+}

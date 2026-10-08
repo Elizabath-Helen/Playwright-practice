@@ -1,0 +1,44 @@
+{
+  "vegetables": [
+    {
+      "name": "Brocolli",
+      "quantity": 1,
+      "price": 120
+    },
+    {
+      "name": "Carrot",
+      "quantity": 1,
+      "price": 56
+    },
+    {
+      "name": "Potato",
+      "quantity": 1,
+      "price": 22
+    }
+  ],
+  "fruits": [
+    {
+      "name": "Apple",
+      "quantity": 1,
+      "price": 72
+    },
+    {
+      "name": "Banana",
+      "quantity": 1,
+      "price": 45
+    }
+  ],
+  "nuts": [
+    {
+      "name": "Almonds",
+      "quantity": 1,
+      "price": 200
+    },
+    {
+      "name": "Cashews",
+      "quantity": 1,
+      "price": 650
+    }
+  ]
+}
+
