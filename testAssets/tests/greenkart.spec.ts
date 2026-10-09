@@ -1,235 +1,311 @@
+
 import { test, expect } from '../fixtures/greenkartFixture';
 import categoryData1 from '../test-data/greenkart1.json';
 import categoryData2 from '../test-data/greenkart2.json';
 import categoryData3 from '../test-data/greenkart3.json';
 
+test.describe('GreenKart - Product Categorization and Shopping Cart', () => {
 
+    test('Task 1 - Identify and group products category-wise', async ({ page, greenKartPage, captureScreenshot }) => {
 
-test('Task 1 - Identify and group GreenKart products category-wise', async ({ page, greenKartPage }) => {
+        const vegetables: string[] = [];
+        const fruits: string[] = [];
+        const nuts: string[] = [];
+        const uncategorizedProducts: string[] = [];
+        let productNames: string[] = [];
 
-    let productNames: string[] = [];
-    const vegetables: string[] = [];
-    const fruits: string[] = [];
-    const nuts: string[] = [];
-    const uncategorizedProducts: string[] = [];
-
-    await test.step('Navigate to GreenKart', async () => {
-        await greenKartPage.navigateToGreenKart();
-        await expect(page).toHaveTitle(/GreenKart/i);
-    });
-
-    await test.step('Identify and group products category-wise', async () => {
-        productNames = await greenKartPage.getProductNames();
-        expect(productNames.length).toBeGreaterThan(0);
-
-        for (const product of productNames) {
-            const productName = product.split(' - ')[0].trim();
-
-            if (categoryData1.vegetables.includes(productName)) {
-                vegetables.push(productName);
+        await captureScreenshot( 'Open GreenKart to view the available products',async () => {
+                await greenKartPage.navigateToGreenKart();
             }
-            else if (categoryData1.fruits.includes(productName)) {
-                fruits.push(productName);
+        );
+
+        await captureScreenshot('Verify GreenKart homepage has loaded successfully', async () => {
+                await expect( page,'GreenKart should display the expected homepage title.').toHaveTitle(/GreenKarted/i);
             }
-            else if (categoryData1.nuts.includes(productName)) {
-                nuts.push(productName);
+        );
+
+        await captureScreenshot( 'Identify and classify the available products into vegetables, fruits and nuts', async () => {
+                productNames = await greenKartPage.getProductNames();
+
+                for (const product of productNames) {
+                    const productName = product.split(' - ')[0].trim();
+
+                    if (categoryData1.vegetables.includes(productName)) {
+                        vegetables.push(productName);
+                    } else if (categoryData1.fruits.includes(productName)) {
+                        fruits.push(productName);
+                    } else if (categoryData1.nuts.includes(productName)) {
+                        nuts.push(productName);
+                    } else {
+                        uncategorizedProducts.push(productName);
+                    }
+                }
             }
-            else {
-                uncategorizedProducts.push(productName);
+        );
+
+        await captureScreenshot( 'Verify the product listing contains products', async () => {
+                await expect( productNames.length, 'The GreenKart product listing should contain at least one product.' ).toBeGreaterThan(0);
             }
-        }
+        );
 
-        console.log('Vegetables:', vegetables);
-        console.log('Vegetable Count:', vegetables.length);
-        console.log('Fruits:', fruits);
-        console.log('Fruit Count:', fruits.length);
-        console.log('Nuts:', nuts);
-        console.log('Nuts Count:', nuts.length);
+        await captureScreenshot( 'Verify the identified vegetable count matches the test data', async () => {
+                await expect( vegetables.length, 'The identified vegetable count should match greenkart1.json.' ).toBe(categoryData1.vegetables.length);
+            }
+        );
 
-        expect(vegetables.length).toBe(categoryData1.vegetables.length);
-        expect(fruits.length).toBe(categoryData1.fruits.length);
-        expect(nuts.length).toBe(categoryData1.nuts.length);
+        await captureScreenshot('Verify the identified fruit count matches the test data', async () => {
+                await expect( fruits.length, 'The identified fruit count should match greenkart1.json.').toBe(categoryData1.fruits.length);
+            }
+        );
+
+        await captureScreenshot( 'Verify the identified nut count matches the test data', async () => {
+                await expect( nuts.length, 'The identified nut count should match greenkart1.json.').toBe(categoryData1.nuts.length);
+            }
+        );
+
+        await captureScreenshot( 'Verify every product belongs to a configured category', async () => {
+                await expect( uncategorizedProducts, `Every product should belong to a configured category. Uncategorized products: ${uncategorizedProducts.join(', ') || 'None'}`
+                ).toHaveLength(0);
+            }
+        );
+
+        await captureScreenshot( 'Verify category counts account for all displayed products',async () => {
+                const totalCategorizedProducts = vegetables.length + fruits.length + nuts.length;
+
+                await expect( totalCategorizedProducts, 'The combined vegetable, fruit and nut counts should equal the total displayed product count.'
+                ).toBe(productNames.length);
+            }
+        );
     });
 
-    await test.step('Verify all products are categorized', async () => {
-        expect(uncategorizedProducts).toHaveLength(0);
-    });
 
-    await test.step('Verify total categorized products', async () => {
-        const totalCategorizedProducts = vegetables.length + fruits.length + nuts.length;
-        expect(totalCategorizedProducts).toBe(productNames.length);
-    });
+    
+    test('Task 2 - Add products to cart based on category', async ({ page, greenKartPage, captureScreenshot }) => {
 
-    await test.step('Capture screenshot', async () => {
-        await page.screenshot({
-            path: 'screenshots/task1-greencart-products.png',
-            fullPage: true
-        });
-    });
-});
+        const expectedProducts = [
+            ...categoryData2.vegetables,
+            ...categoryData2.fruits,
+            ...categoryData2.nuts
+        ];
 
+        await captureScreenshot( 'Open GreenKart to select products from the configured categories', async () => {
+                await greenKartPage.navigateToGreenKart();
+            }
+        );
 
-test('Task 2 - Add products to cart based on category', async ({ page, greenKartPage }) => {
+        await captureScreenshot( 'Verify GreenKart homepage has loaded successfully', async () => {
+                await expect( page, 'GreenKart should display the expected homepage title before product selection.'
+                ).toHaveTitle(/GreenKart/i);
+            }
+        );
 
-    const expectedProducts = [
-        ...categoryData2.vegetables,
-        ...categoryData2.fruits,
-        ...categoryData2.nuts
-    ];
+        await captureScreenshot( 'Verify the shopping cart starts empty', async () => {
+                await expect( greenKartPage.cartCount, 'The cart should contain zero products before adding selected items.'
+                ).toHaveText('0');
+            }
+        );
 
-    await test.step('Navigate to GreenKart', async () => {
-        await greenKartPage.navigateToGreenKart();
-        await expect(page).toHaveTitle(/GreenKart/i);
-    });
+        await captureScreenshot( 'Select and add the configured vegetable products to the shopping cart',  async () => {
+                await greenKartPage.addProductsToCart(categoryData2.vegetables);
+            }
+        );
 
-    await test.step('Ensure cart is empty', async () => {
-        await expect(greenKartPage.cartCount).toHaveText('0');
-    });
+        await captureScreenshot( 'Verify the cart count after adding vegetables', async () => {
+                await expect( greenKartPage.cartCount, 'The cart count should equal the number of selected vegetables.'
+                ).toHaveText(String(categoryData2.vegetables.length));
+            }
+        );
 
-    await test.step('Add vegetable products to cart', async () => {
-        await greenKartPage.addProductsToCart(categoryData2.vegetables);
-        await expect(greenKartPage.cartCount).toHaveText(String(categoryData2.vegetables.length));
-    });
+        await captureScreenshot( 'Select and add the configured fruit products to the shopping cart', async () => {
+                await greenKartPage.addProductsToCart(categoryData2.fruits);
+            }
+        );
 
-    await test.step('Add fruit products to cart', async () => {
-        await greenKartPage.addProductsToCart(categoryData2.fruits);
-        await expect(greenKartPage.cartCount).toHaveText(String(categoryData2.vegetables.length + categoryData2.fruits.length));
-    });
+        const expectedVegetableAndFruitCount = categoryData2.vegetables.length + categoryData2.fruits.length;
 
-    await test.step('Add nut products to cart', async () => {
-        await greenKartPage.addProductsToCart(categoryData2.nuts);
-        await expect(greenKartPage.cartCount).toHaveText(String(expectedProducts.length));
-    });
+        await captureScreenshot( 'Verify the cart count includes vegetables and fruits', async () => {
+                await expect( greenKartPage.cartCount, 'The cart count should include all selected vegetables and fruits.' ).toHaveText(String(expectedVegetableAndFruitCount));
+            }
+        );
 
-    await test.step('Open shopping cart', async () => {
-        await greenKartPage.openCart();
-        await expect(greenKartPage.cartItems).toHaveCount(expectedProducts.length);
-    });
+        await captureScreenshot( 'Select and add the configured nut products to complete the category selection', async () => {
+                await greenKartPage.addProductsToCart(categoryData2.nuts);
+            }
+        );
 
-    await test.step('Verify products are added to cart', async () => {
+        await captureScreenshot( 'Verify the cart count includes products from all selected categories', async () => {
+                await expect( greenKartPage.cartCount, 'The cart count should equal the total number of selected products across all categories.'
+                ).toHaveText(String(expectedProducts.length));
+            }
+        );
+
+        await captureScreenshot( 'Open the shopping cart to review the selected products', async () => {
+                await greenKartPage.openCart();
+            }
+        );
+
+        await captureScreenshot( 'Verify the cart displays one row for each selected product', async () => {
+                await expect( greenKartPage.cartItems, 'The cart should display one row for each selected product.'
+                ).toHaveCount(expectedProducts.length);
+            }
+        );
+
         const actualProducts = await greenKartPage.getCartProductNames();
 
-        console.log('Expected Products:', expectedProducts);
-        console.log('Actual Products:', actualProducts);
-
-        expect(actualProducts).toHaveLength(expectedProducts.length);
+        await captureScreenshot( 'Verify the cart contains the expected number of products', async () => {
+                await expect( actualProducts, 'The cart should contain exactly the expected number of products.'
+                ).toHaveLength(expectedProducts.length);
+            }
+        );
 
         for (const product of expectedProducts) {
-            expect(actualProducts).toContainEqual(expect.stringContaining(product));
-        }
-    });
-
-    await test.step('Capture screenshot', async () => {
-        await page.screenshot({
-            path: 'screenshots/task2-greencart-cart.png',
-            fullPage: true
-        });
-    });
-});
-
-
-test('Task 3 - Add products, verify cart and proceed for billing', async ({ page, greenKartPage }) => {
-
-    const expectedProducts = [
-        ...categoryData3.vegetables,
-        ...categoryData3.fruits,
-        ...categoryData3.nuts
-    ];
-
-
-    await test.step('Navigate to GreenKart', async () => {
-        await greenKartPage.navigateToGreenKart();
-        await expect(page).toHaveTitle(/GreenKart/i);
-    });
-
-
-    await test.step('Verify cart is empty', async () => {
-        await expect(greenKartPage.cartCount).toHaveText('0');
-    });
-
-
-    await test.step('Add 3 vegetables to cart', async () => {
-        const vegetables = categoryData3.vegetables.map(product => product.name);
-        await greenKartPage.addProductsToCart(vegetables);
-        await expect(greenKartPage.cartCount).toHaveText('3');
-    });
-
-
-    await test.step('Add 2 fruits to cart', async () => {
-        const fruits = categoryData3.fruits.map(product => product.name);
-        await greenKartPage.addProductsToCart(fruits);
-        await expect(greenKartPage.cartCount).toHaveText('5');
-    });
-
-
-    await test.step('Add 2 nuts to cart', async () => {
-        const nuts = categoryData3.nuts.map(product => product.name);
-        await greenKartPage.addProductsToCart(nuts);
-        await expect(greenKartPage.cartCount).toHaveText('7');
-    });
-
-
-    await test.step('Open shopping cart', async () => {
-        await greenKartPage.openCart();
-        await expect(greenKartPage.cartItems).toHaveCount(7);
-    });
-
-
-    await test.step('Verify products in cart', async () => {
-        const actualProducts = await greenKartPage.getCartProductNames();
-
-        const expectedProductNames = expectedProducts.map(product => `${product.name} -`);
-        expect(actualProducts).toHaveLength(7);
-
-        for (const product of expectedProductNames) {
-
-            expect(actualProducts).toContainEqual(
-                expect.stringContaining(product)
+            await captureScreenshot( `Verify ${product} is present in the shopping cart`, async () => {
+                    await expect( actualProducts, `The selected product "${product}" should appear in the shopping cart.`
+                    ).toContainEqual(expect.stringContaining(product));
+                }
             );
         }
     });
 
 
-    await test.step('Verify quantity of each product', async () => {
-        const actualQuantities = await greenKartPage.getCartQuantities();
-        const normalizedActualQuantities = actualQuantities.map(quantity => quantity.trim());
-        const expectedQuantities = expectedProducts.map(product => `${product.quantity} No.` );
-        expect(normalizedActualQuantities).toEqual(expectedQuantities);
-    });
+   
+    test('Task 3 - Add products, verify cart and proceed for billing', async ({ page, greenKartPage, captureScreenshot }) => {
 
+        const expectedProducts = [
+            ...categoryData3.vegetables,
+            ...categoryData3.fruits,
+            ...categoryData3.nuts
+        ];
 
-    await test.step('Verify price of each product', async () => {
-        const actualPrices = await greenKartPage.getCartPrices();
-        const expectedPrices = expectedProducts.map(product => String(product.price));
-        expect(actualPrices).toEqual(expectedPrices);
-    });
+        await captureScreenshot( 'Open GreenKart to begin selecting products for checkout', async () => {
+                await greenKartPage.navigateToGreenKart();
+            }
+        );
 
+        await captureScreenshot( 'Verify GreenKart homepage has loaded successfully', async () => {
+                await expect( page, 'GreenKart should display the expected homepage title before the purchase begins.'
+                ).toHaveTitle(/GreenKart/i);
+            }
+        );
 
-    await test.step('Capture cart screenshot', async () => {
-        await page.screenshot({
-            path: 'screenshots/task3-cart.png',
-            fullPage: true
-        });
+        await captureScreenshot( 'Verify the shopping cart starts empty', async () => {
+                await expect( greenKartPage.cartCount, 'The cart should be empty before adding the selected products.'
+                ).toHaveText('0');
+            }
+        );
 
-    });
+        const vegetables = categoryData3.vegetables.map(product => product.name );
 
+        await captureScreenshot( 'Verify the test data contains three vegetables', async () => {
+                await expect( vegetables, 'The test data should contain exactly three vegetables.' ).toHaveLength(3);
+            }
+        );
 
-    await test.step('Proceed to billing', async () => {
-        await greenKartPage.proceedToCheckout();
-    });
+        await captureScreenshot( 'Add the three selected vegetables to the shopping cart', async () => {
+                await greenKartPage.addProductsToCart(vegetables);
+            }
+        );
 
+        await captureScreenshot( 'Verify the cart contains three vegetables', async () => {
+                await expect( greenKartPage.cartCount, 'The cart should contain three products after adding three vegetables.'
+                ).toHaveText('3');
+            }
+        );
 
-    await test.step('Verify billing page', async () => {
-        await expect(greenKartPage.placeOrderButton).toBeVisible();
-    });
+        const fruits = categoryData3.fruits.map(
+            product => product.name
+        );
 
+        await captureScreenshot( 'Verify the test data contains two fruits', async () => {
+                await expect( fruits, 'The test data should contain exactly two fruits.' ).toHaveLength(2);
+            }
+        );
 
-    await test.step('Capture billing screenshot', async () => {
-        await page.screenshot({
-            path: 'screenshots/task3-billing.png',
-            fullPage: true
-        });
+        await captureScreenshot( 'Add two selected fruits alongside the vegetables', async () => {
+                await greenKartPage.addProductsToCart(fruits);
+            }
+        );
 
+        await captureScreenshot( 'Verify the cart contains three vegetables and two fruits', async () => {
+                await expect( greenKartPage.cartCount, 'The cart should contain five products after adding two fruits to three vegetables.'
+                ).toHaveText('5');
+            }
+        );
+
+        const nuts = categoryData3.nuts.map( product => product.name);
+
+        await captureScreenshot( 'Verify the test data contains two nuts', async () => {
+                await expect( nuts, 'The test data should contain exactly two nuts.' ).toHaveLength(2);
+            }
+        );
+
+        await captureScreenshot( 'Add two selected nuts to complete the seven-product selection', async () => {
+                await greenKartPage.addProductsToCart(nuts);
+            }
+        );
+
+        await captureScreenshot( 'Verify the cart contains all seven selected products', async () => {
+                await expect( greenKartPage.cartCount, 'The cart should contain seven products: three vegetables, two fruits and two nuts.'
+                ).toHaveText('7');
+            }
+        );
+
+        await captureScreenshot( 'Open the shopping cart to review all seven selected products', async () => {
+                await greenKartPage.openCart();
+            }
+        );
+
+        await captureScreenshot( 'Verify the cart displays exactly seven product rows', async () => {
+                await expect( greenKartPage.cartItems, 'The cart should display exactly seven product rows.' ).toHaveCount(7);
+            }
+        );
+
+        const actualProducts = await greenKartPage.getCartProductNames();
+
+        await captureScreenshot( 'Verify the cart contains exactly seven selected products', async () => {
+                await expect( actualProducts, 'The cart should contain exactly seven selected products.').toHaveLength(7);
+            }
+        );
+
+        for (const product of expectedProducts) {
+            await captureScreenshot( `Verify ${product.name} is present in the shopping cart`, async () => {
+                    await expect( actualProducts, `The selected product "${product.name}" should appear in the cart.`
+                    ).toContainEqual( expect.stringContaining(`${product.name} -`));
+                }
+            );
+        }
+
+        await captureScreenshot( 'Verify the displayed quantity of every selected product', async () => {
+                const actualQuantities = await greenKartPage.getCartQuantities();
+
+                const normalizedActualQuantities = actualQuantities.map( quantity => quantity.trim());
+
+                const expectedQuantities = expectedProducts.map( product => `${product.quantity} No.`);
+
+                await expect(normalizedActualQuantities, 'Each cart row should display the expected quantity from greenkart3.json in the same product order.'
+                ).toEqual(expectedQuantities);
+            }
+        );
+
+        await captureScreenshot( 'Verify the displayed price of every selected product', async () => {
+                const actualPrices = await greenKartPage.getCartPrices();
+                const expectedPrices = expectedProducts.map( product => String(product.price));
+
+                await expect( actualPrices, 'Each cart row should display the expected price from greenkart3.json in the same product order.'
+                ).toEqual(expectedPrices);
+            }
+        );
+
+        await captureScreenshot( 'Proceed from the verified shopping cart to the billing page', async () => {
+                await greenKartPage.proceedToCheckout();
+            }
+        );
+
+        await captureScreenshot( 'Verify the billing page is ready for the next purchase step', async () => {
+                await expect( greenKartPage.placeOrderButton, 'The Place Order button should be visible after navigating to the billing page.'
+                ).toBeVisible();
+            }
+        );
     });
 
 });

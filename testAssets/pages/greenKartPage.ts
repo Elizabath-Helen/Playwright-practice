@@ -51,11 +51,7 @@ export default class GreenKartPage {
     // task2
     async addProductToCart(productName: string) {
         const addButton = this.productCards.filter({ hasText: `${productName} -` }).locator('.product-action button');
-        // await expect(async () => {
-        //     const before = Number(await this.cartCount.innerText());
             await addButton.click();
-        //     await expect(this.cartCount).toHaveText(String(before + 1), { timeout: 2000 });
-        // }, `"${productName}" should be added to cart`).toPass({ timeout: 15000 });
     }
 
     async addProductsToCart(productNames: string[]) {
