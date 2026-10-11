@@ -1,9 +1,11 @@
 
 import { test as base, expect } from '@playwright/test';
 import GreenKartPage from '../pages/greenkartPage';
+import HyrFormPage from '../pages/hyrFormPage';
 
 type GreenKartFixtures = {
     greenKartPage: GreenKartPage;
+    hyrFormPage: HyrFormPage;
     captureScreenshot: (
         name: string,
         action: () => Promise<void>
@@ -13,6 +15,10 @@ type GreenKartFixtures = {
 export const test = base.extend<GreenKartFixtures>({
     greenKartPage: async ({ page }, use) => {
         await use(new GreenKartPage(page));
+    },
+
+    hyrFormPage: async ({ page }, use) => {
+        await use(new HyrFormPage(page));
     },
 
     captureScreenshot: async ({ page }, use) => {
@@ -34,10 +40,7 @@ export const test = base.extend<GreenKartFixtures>({
                             contentType: 'image/png'
                         });
                     } catch (error) {
-                        console.warn(
-                            `Could not capture screenshot for step "${name}"`,
-                            error
-                        );
+                        console.warn( `Could not capture screenshot for step "${name}"`, error);
                     }
                 }
             });

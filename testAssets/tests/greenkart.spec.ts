@@ -1,8 +1,8 @@
 
 import { test, expect } from '../fixtures/greenkartFixture';
-import categoryData1 from '../test-data/greenkart1.json';
-import categoryData2 from '../test-data/greenkart2.json';
-import categoryData3 from '../test-data/greenkart3.json';
+import categoryData1 from '../test-data/greenkart/greenkart1.json';
+import categoryData2 from '../test-data/greenkart/greenkart2.json';
+import categoryData3 from '../test-data/greenkart/greenkart3.json';
 
 test.describe('GreenKart - Product Categorization and Shopping Cart', () => {
 
