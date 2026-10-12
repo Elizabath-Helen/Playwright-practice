@@ -48,18 +48,29 @@ export default class HyrFormPage {
         };
     }
 
-    async getContactCountrySalaryDetails() {
-        const details: {contact: string; country: string; salary: string;}[] = [];
+    async getContactTableDetails() {
+        const headerCells = this.contactTable.locator('tr').first().locator('th');
+
+        const headers = (await headerCells.allInnerTexts()).map( header => header.trim());
+
+        const details: Record<string, string>[] = [];
         const rowCount = await this.contactRows.count();
 
         for (let i = 0; i < rowCount; i++) {
             const cells = this.contactRows.nth(i).locator('td');
+            const record: Record<string, string> = {};
 
-            details.push({
-                contact: (await cells.nth(1).innerText()).trim(),
-                country: (await cells.nth(2).innerText()).trim(),
-                salary: (await cells.nth(3).innerText()).trim()
-            });
+            for (let j = 0; j < headers.length; j++) {
+                const header = headers[j];
+
+                if (!header) {
+                    continue;
+                }
+
+                record[header] = (await cells.nth(j).innerText()).trim();
+            }
+
+            details.push(record);
         }
 
         return details;

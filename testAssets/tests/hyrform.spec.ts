@@ -1,7 +1,6 @@
 
 import { test, expect } from '../fixtures/greenkartFixture';
 import formData from '../test-data/hyform/hyrFormData.json';
-import salaryData from '../test-data/hyform/salaryData.json';
 
 test.describe('HYR Form Automation', () => {
 
@@ -81,13 +80,13 @@ test.describe('HYR Form Automation', () => {
             }
         );
 
-        const contactDetails = await hyrFormPage.getContactCountrySalaryDetails();
+        const contactDetails = await hyrFormPage.getContactTableDetails();
 
 
         console.log('\n--- Contact Table Details ---');
 
         for (const record of contactDetails) {
-            console.log( `Contact : ${record.contact}; Country: ${record.country}; Salary: ${record.salary}`);
+            console.log(record);
         }
     });
 
@@ -104,20 +103,20 @@ test.describe('HYR Form Automation', () => {
         );
 
 
-        const contactDetails = await hyrFormPage.getContactCountrySalaryDetails();
+        const contactDetails = await hyrFormPage.getContactTableDetails();
 
         const salaryAbove5000 = contactDetails.filter(
-            record => Number(record.salary) > 5000
+            record => Number(record.Salary) > 5000
         );
 
         const salaryBelow5000 = contactDetails.filter(
-            record => Number(record.salary) < 5000
+            record => Number(record.Salary) < 5000
         );
 
         await captureScreenshot( 'Verify records have salary greater than 5000', async () => {
                 expect( salaryAbove5000.length, 'At least one record should have salary above 5000' ).toBeGreaterThan(0);
 
-                expect( salaryAbove5000.every(record => Number(record.salary) > 5000), 'Every printed record should have salary greater than 5000'
+                expect( salaryAbove5000.every(record => Number(record['Salary']) > 5000), 'Every printed record should have salary greater than 5000'
                 ).toBe(true);
             }
         );
@@ -125,17 +124,13 @@ test.describe('HYR Form Automation', () => {
         console.log('\n--- Objects With Salary Greater Than 5000 ---');
 
         for (const record of salaryAbove5000) {
-            console.log({
-                contact: record.contact,
-                country: record.country,
-                salary: Number(record.salary)
-            });
+            console.log({ ...record, Salary: Number(record['Salary']) });
         }
 
         await captureScreenshot( 'Verify records have salary less than 5000', async () => {
                 expect( salaryBelow5000.length, 'At least one record should have salary below 5000' ).toBeGreaterThan(0);
 
-                expect( salaryBelow5000.every(record => Number(record.salary) < 5000), 'Every printed record should have salary less than 5000'
+                expect( salaryBelow5000.every(record => Number(record['Salary']) < 5000), 'Every printed record should have salary less than 5000'
                 ).toBe(true);
             }
         );
@@ -143,11 +138,8 @@ test.describe('HYR Form Automation', () => {
         console.log('\n--- Objects With Salary Less Than 5000 ---');
 
         for (const record of salaryBelow5000) {
-            console.log({
-                contact: record.contact,
-                country: record.country,
-                salary: Number(record.salary)
-            });
+            console.log({ ...record, Salary: Number(record['Salary']) });
+            
         }
     });
 });

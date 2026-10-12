@@ -1,0 +1,8 @@
+
+--- Objects With Salary Greater Than 5000 ---
+{ Contact: 'Roland Mendel', Country: 'Austria', Salary: 7000 }
+
+--- Objects With Salary Less Than 5000 ---
+{ Contact: 'Francisco Chang', Country: 'Mexico', Salary: 2000 }
+{ Contact: 'Helen Bennett', Country: 'UK', Salary: 3000 }
+{ Contact: 'Giovanni Rovelli', Country: 'Italy', Salary: 1000 }

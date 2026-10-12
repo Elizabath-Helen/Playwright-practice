@@ -1,0 +1,7 @@
+
+--- Form Values Read From UI ---
+firstName: Rachel
+lastName: Philip
+email: rachel@example.com
+password: Test@12345
+repeatPassword: Test@12345
